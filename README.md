@@ -52,6 +52,3 @@
 - Responsive design for desktop and mobile
 - Advanced options for fine-tuning generation
 
-## Author
-
-- Chris Tate ([@ctatedev](https://x.com/ctatedev))
