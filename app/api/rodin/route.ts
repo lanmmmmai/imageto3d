@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-const API_KEY = "vibecoding" // Public API key
+const API_KEY = process.env.RODIN_API_KEY || "vibecoding"
 
 export async function POST(request: Request) {
   try {
@@ -16,15 +16,15 @@ export async function POST(request: Request) {
       body: formData,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
+    const data = await response.json()
+
+    if (!response.ok || data.error) {
       return NextResponse.json(
-        { error: `API request failed: ${response.status}`, details: errorText },
-        { status: response.status },
+        { error: data.error || `API request failed: ${response.status}`, details: data },
+        { status: response.ok ? 400 : response.status },
       )
     }
 
-    const data = await response.json()
     return NextResponse.json(data)
   } catch (error) {
     console.error("Error in Rodin API route:", error)

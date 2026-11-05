@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-const API_KEY = "vibecoding" // Public API key
+const API_KEY = process.env.RODIN_API_KEY || "vibecoding"
 
 export async function POST(request: Request) {
   try {
