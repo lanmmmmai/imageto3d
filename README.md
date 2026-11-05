@@ -6,9 +6,32 @@
 
 <p align="center">
   <a href="https://colab.research.google.com/github/lanmmmmai/imageto3d/blob/main/colab_3d_backend.ipynb">
-    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab (Free GPU)" />
+    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab (Free GPU Backend)" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://colab.research.google.com/github/lanmmmmai/imageto3d/blob/main/ai_game_character_pipeline_2d_to_3d.ipynb">
+    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab (Game Character AI Research Notebook)" />
   </a>
 </p>
+
+---
+
+## 🎓 Nghiên Cứu Khoa Học / Bài Báo: Pipeline AI Tạo Hình Nhân Vật Game (2D -> 3D)
+
+Notebook thực nghiệm phục vụ viết báo cáo khoa học / đề tài tốt nghiệp: **"Ứng dụng Generative AI trong quy trình tạo hình nhân vật Game (Game Character Asset Generation: Text -> 2D Concept -> 3D Mesh)"**.
+
+👉 **Chạy ngay trên Colab:** [ai_game_character_pipeline_2d_to_3d.ipynb](https://colab.research.google.com/github/lanmmmmai/imageto3d/blob/main/ai_game_character_pipeline_2d_to_3d.ipynb)
+
+**Nội dung thực nghiệm trong Notebook:**
+1. **Giai đoạn 1 (Text-to-2D Concept Art):** Ứng dụng Latent Diffusion (Stable Diffusion) tự động tạo concept nhân vật theo chuẩn game (T-pose / A-pose, orthographic front view, nền trắng sạch).
+2. **Giai đoạn 2 (2D-to-3D Reconstruction):** Ứng dụng Feed-forward Triplane NeRF & Transformer (TripoSR) trích xuất lưới đa giác 3D (Mesh) định dạng `.glb` trong 1.5 - 2 giây.
+3. **Giai đoạn 3 (Đo lường & Đánh giá khoa học - Benchmark):**
+   - Thời gian suy luận (Inference Latency) so với quy trình dựng hình truyền thống 3D Artist (Blender / Maya / ZBrush).
+   - Số lượng đỉnh (Vertices) và mặt đa giác (Polygons / Faces) phục vụ tối ưu hóa game (LOD - Level of Detail).
+   - Dung lượng VRAM tiêu thụ và dung lượng file `.glb`.
+4. **Giai đoạn 4 (Trực quan hóa WebUI tương tác):** Trình xem xoay 360° Gradio Model3D có link chia sẻ công khai.
+
+---
 
 ---
 
