@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ExternalLink, Download, ArrowLeft, Settings, Code2, Sparkles, Globe, Box } from "lucide-react"
+import { ExternalLink, Download, ArrowLeft, Settings, Code2, Sparkles, Globe, Box, Zap } from "lucide-react"
 import * as THREE from "three"
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js"
 import type { FormValues } from "@/lib/form-schema"
@@ -25,7 +25,8 @@ import { Button } from "@/components/ui/button"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 export default function Rodin() {
-  const [engine, setEngine] = useState<EngineType>("worldlabs")
+  const [engine, setEngine] = useState<EngineType>("colab")
+  const [colabUrl, setColabUrl] = useState<string>("")
   const [deepseekApiKey, setDeepseekApiKey] = useState<string>("")
   const [meshyApiKey, setMeshyApiKey] = useState<string>("")
   const [worldlabsApiKey, setWorldlabsApiKey] = useState<string>("")
@@ -69,14 +70,24 @@ export default function Rodin() {
       const savedWorldlabsKey = localStorage.getItem("worldlabs_api_key")
       if (savedWorldlabsKey) setWorldlabsApiKey(savedWorldlabsKey)
 
+      const savedColabUrl = localStorage.getItem("colab_backend_url")
+      if (savedColabUrl) setColabUrl(savedColabUrl)
+
       const savedEngine = localStorage.getItem("preferred_3d_engine") as EngineType | null
-      if (savedEngine && ["worldlabs", "meshy", "deepseek", "hyper3d"].includes(savedEngine)) {
+      if (savedEngine && ["colab", "worldlabs", "meshy", "deepseek", "hyper3d"].includes(savedEngine)) {
         setEngine(savedEngine)
       } else {
-        setEngine("worldlabs")
+        setEngine("colab")
       }
     }
   }, [])
+
+  const handleSaveColabUrl = (url: string) => {
+    setColabUrl(url)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("colab_backend_url", url)
+    }
+  }
 
   const handleSaveApiKey = (key: string) => {
     setDeepseekApiKey(key)
@@ -118,6 +129,58 @@ export default function Rodin() {
       }
     }
   }, [isMobile])
+
+  // 0. GOOGLE COLAB (TRIPOSR GPU) PIPELINE - 100% MIỄN PHÍ KHÔNG CẦN KEY
+  async function handleColabSubmit(values: FormValues) {
+    const hasImage = values.images && values.images.length > 0
+    if (!hasImage) {
+      setError("Google Colab (TripoSR) cần ít nhất 1 ảnh đầu vào. Vui lòng nhấn Ctrl+V để dán ảnh hoặc chọn tệp ảnh!")
+      return
+    }
+
+    if (!colabUrl || !colabUrl.trim()) {
+      setError("Chưa cấu hình Google Colab URL. Vui lòng bấm vào icon Cài đặt (cạnh thanh nhập liệu) để mở Colab và dán link vào!")
+      setShowSettings(true)
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+    setModelUrl(null)
+    setThreeObject(null)
+    setGeneratedCode("")
+    setDownloadUrl(null)
+    setWorldMarbleUrl(null)
+    setCurrentPrompt(values.prompt || "colab-triposr-model")
+    setLoadingMessage("Đang gửi ảnh sang Google Colab GPU (Mô hình TripoSR AI)...")
+
+    try {
+      const formData = new FormData()
+      formData.append("colabUrl", colabUrl.trim())
+      formData.append("image", values.images![0])
+
+      const response = await fetch("/api/colab", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const errJson = await response.json().catch(() => ({}))
+        throw new Error(errJson.message || `Lỗi từ Google Colab (${response.status})`)
+      }
+
+      setLoadingMessage("Đang nạp mô hình 3D vào khung xem Three.js...")
+      const glbBlob = await response.blob()
+      const objectUrl = URL.createObjectURL(glbBlob)
+      setModelUrl(objectUrl)
+      setDownloadUrl(objectUrl)
+      setIsLoading(false)
+    } catch (err: any) {
+      console.error("Colab generation error:", err)
+      setError(err?.message || "Đã xảy ra lỗi khi tạo mô hình 3D trên Google Colab.")
+      setIsLoading(false)
+    }
+  }
 
   // 1. WORLD LABS (MARBLE) PIPELINE - Cho Phong cảnh / Không gian thế giới 3D
   async function handleWorldLabsSubmit(values: FormValues) {
@@ -446,7 +509,9 @@ export default function Rodin() {
   }
 
   async function handleSubmit(values: FormValues) {
-    if (engine === "worldlabs") {
+    if (engine === "colab") {
+      await handleColabSubmit(values)
+    } else if (engine === "worldlabs") {
       await handleWorldLabsSubmit(values)
     } else if (engine === "meshy") {
       await handleMeshySubmit(values)
@@ -496,6 +561,7 @@ export default function Rodin() {
   }
 
   const getSubtitle = () => {
+    if (engine === "colab") return "Powered by Google Colab GPU (TripoSR - Miễn phí 100%)"
     if (engine === "worldlabs") return "Powered by World Labs (Marble - Không Gian Thế Giới 3D)"
     if (engine === "meshy") return "Powered by Meshy AI (Chuyên Image-to-3D có Texture)"
     if (engine === "deepseek") return "Powered by DeepSeek AI & Three.js"
@@ -529,6 +595,23 @@ export default function Rodin() {
 
             {/* Quick Engine Switcher Pills */}
             <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md p-1 rounded-full border border-white/10 w-fit flex-wrap">
+              {/* Google Colab GPU (FREE) */}
+              <button
+                type="button"
+                onClick={() => handleEngineChange("colab")}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                  engine === "colab"
+                    ? "bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-400"
+                    : "text-emerald-400 hover:text-white"
+                }`}
+              >
+                <Zap className="h-3 w-3 text-emerald-300" />
+                <span>⚡ Colab GPU</span>
+                <span className="text-[10px] bg-emerald-500/30 text-emerald-200 px-1.5 py-0.2 rounded font-mono">
+                  Miễn phí
+                </span>
+              </button>
+
               {/* World Labs */}
               <button
                 type="button"
@@ -708,6 +791,8 @@ export default function Rodin() {
       <DeepSeekSettingsDialog
         open={showSettings}
         onOpenChange={setShowSettings}
+        colabUrl={colabUrl}
+        onSaveColabUrl={handleSaveColabUrl}
         apiKey={deepseekApiKey}
         onSaveApiKey={handleSaveApiKey}
         meshyApiKey={meshyApiKey}

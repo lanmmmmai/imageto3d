@@ -1,54 +1,52 @@
-<a href="https://v0.dev/community/3-d-model-generator-powered-by-hyper3-d-rodin-bTIhXEOJa8w">
-  <img alt="3D Model Generator" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ss3-WrQOPkN8S95aSRruDF4fqnOc19oYGy.png">
-  <h1 align="center">3D Model Generator</h1>
-</a>
+<h1 align="center">3D Model Generator (Image-to-3D)</h1>
 
 <p align="center">
-  A 3D model generation application powered by Hyper3D Rodin API.
+  Ứng dụng tạo mô hình 3D từ ảnh & văn bản bằng AI (Hỗ trợ dán ảnh trực tiếp qua Ctrl+V)
 </p>
 
 <p align="center">
-  <a href="https://v0.dev/community/3-d-model-generator-powered-by-hyper3-d-rodin-bTIhXEOJa8w">
-    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/open-in-v0-button-ZKuXSWof756tbZD6vq9OV8Xq5pZS66.svg" alt="Open in v0" width="120" />
+  <a href="https://colab.research.google.com/github/lanmmmmai/imageto3d/blob/main/colab_3d_backend.ipynb">
+    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab (Free GPU)" />
   </a>
 </p>
 
-<p align="center">
-  <a href="#about"><strong>About</strong></a> ·
-  <a href="#how-to-use"><strong>How to Use</strong></a> ·
-  <a href="#tech"><strong>Tech</strong></a> ·
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#author"><strong>Author</strong></a>
-</p>
-<br/>
+---
 
-## About
+## ⚡ 1. Sử dụng Google Colab GPU (Miễn Phí 100% - Không Cần Mua Key)
 
-3D Model Generator is an AI-powered application that allows you to create 3D models from text prompts or images. Powered by the Hyper3D Rodin API, this tool makes 3D creation accessible to everyone, regardless of their 3D modeling experience.
+Bạn không cần tốn tiền mua API Key! Ứng dụng tích hợp sẵn backend chạy mô hình **TripoSR** trên card đồ họa NVIDIA T4 miễn phí của Google Colab:
 
-## How to Use
+1. Nhấp vào nút **Open In Colab** ở trên hoặc mở file `colab_3d_backend.ipynb`.
+2. Trên Google Colab, chọn menu **Runtime** > **Change runtime type** > Chọn **T4 GPU**.
+3. Nhấn **Run all** (chạy lần lượt 2 ô lệnh trong notebook).
+4. Sao chép link `https://...trycloudflare.com` xuất hiện ở cuối ô số 2.
+5. Mở web của bạn, nhấn vào icon **Cài đặt Engine** (hình thanh gạt cạnh nút gửi) > dán link vào ô **Google Colab Backend URL** > Bấm **Lưu cấu hình**.
+6. Dán bất kỳ ảnh nào (`Ctrl + V`) và nhấn **Tạo 3D** (~1.5 giây là có file 3D `.glb` xoay 360°)!
 
-1. **Enter a prompt**: Describe the 3D model you want to create
-2. **Upload images** (optional): Add reference images to guide the generation
-3. **Adjust settings**: Customize quality, format, and other parameters
-4. **Generate**: Click the submit button to create your 3D model
-5. **Download**: Once generated, download your model in the selected format
+---
 
-## Tech
+## ✨ 2. Các tính năng nổi bật
 
-- React & Next.js
-- Three.js for 3D rendering and visualization
-- Hyper3D Rodin API for 3D model generation
-- Tailwind CSS for styling
-- Shadcn/UI components
+- **Dán ảnh siêu tốc (`Ctrl + V`):** Nhấn chụp màn hình (`Win + Shift + S`) hoặc Copy ảnh trên mạng rồi bấm `Ctrl + V` trên web là ảnh tự động nạp vào.
+- **Đa dạng AI Engine:**
+  - ⚡ **Google Colab GPU (TripoSR):** Miễn phí 100%, tạo 3D cực nhanh trong 1.5s.
+  - 🌍 **World Labs (Marble):** Tạo bối cảnh không gian thế giới 3D từ ảnh phong cảnh.
+  - 🌟 **Meshy AI:** Tạo nhân vật và đồ vật 3D chi tiết có texture.
+  - 🚀 **DeepSeek 3D:** Sinh code Three.js procedural từ prompt văn bản.
+  - 🌐 **Hyper3D Rodin:** Tạo lưới 3D chi tiết cao.
+- **Trình xem 3D tương tác (Three.js):** Xoay 360°, phóng to/thu nhỏ, đổ bóng thực tế.
+- **Xuất file chuẩn:** Tải về định dạng **GLB** tương thích Blender, Unity, Unreal Engine, Web 3D.
 
-## Features
+---
 
-- Text-to-3D generation
-- Image-to-3D generation
-- Multiple file format support (GLB, USDZ, FBX, OBJ, STL)
-- Adjustable quality settings
-- Real-time 3D preview
-- Responsive design for desktop and mobile
-- Advanced options for fine-tuning generation
+## 🛠️ 3. Khởi chạy cục bộ (Local Development)
 
+```bash
+# 1. Cài đặt thư viện
+npm install
+
+# 2. Khởi chạy server phát triển
+npm run dev
+```
+
+Truy cập: [http://localhost:3000](http://localhost:3000)
